@@ -1,5 +1,7 @@
 package com.chenbing;
 
+import com.chenbing.Thread.FixedThreadPool;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,8 +12,10 @@ public class WebServer {
 
             ServerSocket serverSocket = new ServerSocket(port);
             while(true){
+                System.out.println("------socket------");
                 Socket socket = serverSocket.accept();
-                new HttpServer(socket).start();
+//                new NormalThread(socket).start();
+                FixedThreadPool.startThread(socket);
             }
         } catch (IOException e) {
             e.printStackTrace();

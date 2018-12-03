@@ -3,42 +3,23 @@ package com.chenbing;
 import java.io.*;
 import java.net.Socket;
 
-public class HttpServer extends Thread{
+public class HttpServer{
     /**
      * web资源根路径
      */
     public static final String ROOT = "D:\\github\\HttpServer\\src\\web";
 
-    /**
-     * 输入流对象,读取浏览器请求
-     */
-    private InputStream input;
-
-    /**
-     * 输出流对象，响应内容给浏览器
-     */
-    private OutputStream out;
-
-    /**
-     * @description:初始化socket对象,获取对应 输入，输出流
-     * @param socket
-     */
-    public HttpServer(Socket socket) {
+    public static void doing(Socket socket){
         try {
-            input = socket.getInputStream();
-            out = socket.getOutputStream();
+            InputStream input = socket.getInputStream();
+            OutputStream out = socket.getOutputStream();
+            String filePath = read(input);
+            response(filePath,out);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
 
-    /**
-     * 多线程方法调用
-     */
-    @Override
-    public void run() {
-        String filePath = read();
-        response(filePath);
     }
 
     /**
@@ -51,7 +32,8 @@ public class HttpServer extends Thread{
      * @date:2018年6月6日 上午11:42:37
      *
      */
-    private void response(String filePath) {
+
+    private static void response(String filePath,OutputStream out) {
         File file = new File(ROOT + filePath);
         if (file.exists()) {
             // 1、资源存在，读取资源
@@ -63,9 +45,10 @@ public class HttpServer extends Thread{
                     sb.append(line).append("\r\n");
                 }
                 StringBuffer result = new StringBuffer();
-                result.append("HTTP /1.1 200 ok \r\n");
-                result.append("Content-Type:text/html \r\n");
+                result.append("HTTP/1.1 200 ok \r\n");
+                result.append("Content-Type:text/html;charset=utf-8 \r\n");
                 result.append("Content-Length:" + file.length() + "\r\n");
+
                 result.append("\r\n" + sb.toString());
                 System.out.println("----"+result);
                 out.write(result.toString().getBytes());
@@ -104,7 +87,7 @@ public class HttpServer extends Thread{
      * @date:2018年6月6日 上午11:39:42
      *
      */
-    private String read() {
+    private static String read(InputStream input) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
         try {
             // 读取请求头， 如：GET /index.html HTTP/1.1
