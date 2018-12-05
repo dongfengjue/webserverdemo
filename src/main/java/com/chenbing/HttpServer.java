@@ -61,7 +61,7 @@ public class HttpServer{
         } else {
             // 2、资源不存在，提示 file not found
             StringBuffer error = new StringBuffer();
-            error.append("HTTP /1.1 400 file not found \r\n");
+            error.append("HTTP/1.1 400 file not found \r\n");
             error.append("Content-Type:text/html \r\n");
             error.append("Content-Length:20 \r\n").append("\r\n");
             error.append("<h1 >File Not Found..</h1>");
