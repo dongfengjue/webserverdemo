@@ -1,9 +1,6 @@
 package com.chenbing;
 
-import com.chenbing.Thread.CachedThreadPool;
-import com.chenbing.Thread.FixedThreadPool;
-import com.chenbing.Thread.ScheduledThreadPool;
-import com.chenbing.Thread.SelfThreadPool;
+import com.chenbing.Thread.*;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -21,7 +18,9 @@ public class WebServer {
 //                FixedThreadPool.startThread(socket);
 //                  CachedThreadPool.startThread(socket);
 //                ScheduledThreadPool.startThread(socket);
-                SelfThreadPool.startThread(socket);
+//                SelfThreadPool.startThread(socket);
+                SelfCallableThreadPool.startThread(socket);
+//                SelfExtendsThreadPool.startThread(socket);
             }
         } catch (IOException e) {
             e.printStackTrace();

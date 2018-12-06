@@ -2,6 +2,7 @@ package com.chenbing;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 
 public class HttpServer{
     /**
@@ -19,6 +20,30 @@ public class HttpServer{
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+    }
+
+
+    public static String doing(String input){
+
+            String filePath = read(input);
+            return response(filePath);
+
+    }
+
+    private static String response(String filePath) {
+            StringBuffer sb = new StringBuffer();
+            String line = "hello world";
+
+            StringBuffer result = new StringBuffer();
+            result.append("HTTP/1.1 200 ok \r\n");
+            result.append("Content-Type:text/html;charset=utf-8 \r\n");
+            result.append("Content-Length:" + line.length() + "\r\n");
+            result.append("\r\n" +line);
+
+            result.append("\r\n" + sb.toString());
+            System.out.println("----"+result);
+            return result.toString();
 
     }
 
@@ -74,6 +99,16 @@ public class HttpServer{
             }
         }
 
+    }
+
+    private static String read(String readLine) {
+            // 读取请求头， 如：GET /index.html HTTP/1.1
+            String[] split = readLine.split(" ");
+            if (split.length != 3) {
+                return null;
+            }
+            System.out.println(readLine);
+            return split[1];
     }
 
     /**
