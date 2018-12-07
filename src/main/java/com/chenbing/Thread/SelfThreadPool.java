@@ -1,8 +1,10 @@
 package com.chenbing.Thread;
 
 import com.chenbing.HttpServer;
+import com.chenbing.NioWebServer;
 
 import java.net.Socket;
+import java.nio.channels.ServerSocketChannel;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -22,7 +24,23 @@ public class SelfThreadPool{
         };
         pool.execute(syncRunnable);
     }
+    public static void startThread(final int port){
+        Runnable syncRunnable = new Runnable() {
+            public void run() {
+                NioWebServer.selector(port);
+            }
+        };
+        pool.execute(syncRunnable);
+    }
 
+    public static void startThread(final ServerSocketChannel serverSocketChannel){
+        Runnable syncRunnable = new Runnable() {
+            public void run() {
+                NioWebServer.selector(serverSocketChannel);
+            }
+        };
+        pool.execute(syncRunnable);
+    }
 }
 
 

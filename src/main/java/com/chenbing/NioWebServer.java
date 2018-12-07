@@ -19,7 +19,7 @@ public class NioWebServer {
     private static final int TIMEOUT = 3000;
 
     public void startServer(int port){
-        selector(port);
+        multipleSelector(port);
     }
     public static void handleAccept(SelectionKey key) throws IOException{
         ServerSocketChannel ssChannel = (ServerSocketChannel)key.channel();
@@ -81,8 +81,8 @@ public class NioWebServer {
             inString.append(buf.get());
         }
 
-//        String result = HttpServer.doing(inString.toString());
-        String result = SelfCallableThreadPool.startThread(inString.toString());
+        String result = HttpServer.doing(inString.toString());
+//        String result = SelfCallableThreadPool.startThread(inString.toString());
         System.out.println("-----result-----"+result);
 
         //将数据写入到信道中
@@ -104,6 +104,58 @@ public class NioWebServer {
         }
         buf.compact();
     }*/
+    public static void multipleSelector(int port){
+        ServerSocketChannel ssc = null;
+
+        try {
+            ssc= ServerSocketChannel.open();
+            ssc.socket().bind(new InetSocketAddress(port));
+            ssc.configureBlocking(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 开启多个selector
+        for(int i=0;i< 100 ;i++){
+            selector(ssc);
+        }
+    }
+
+    public static void selector(ServerSocketChannel ssc){
+        try {
+            Selector selector = Selector.open();
+            ssc.register(selector, SelectionKey.OP_ACCEPT);
+
+            while(true){
+                if(selector.select(TIMEOUT) == 0){
+                    System.out.println("wait request");
+                    continue;
+                }
+                Iterator<SelectionKey> iter = selector.selectedKeys().iterator();
+                while(iter.hasNext()){
+                    SelectionKey key = iter.next();
+                    if(key.isAcceptable()){
+                        handleAccept(key);
+                    }
+                    if(key.isReadable()){
+                        handleRead(key);
+                    }
+                    if(key.isWritable() && key.isValid()){
+                        handleWrite(key);
+                    }
+                    if(key.isConnectable()){
+                        System.out.println("isConnectable = true");
+                    }
+                    iter.remove();
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Deprecated
     public static void selector(int port) {
         Selector selector = null;
         ServerSocketChannel ssc = null;
