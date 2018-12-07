@@ -55,6 +55,7 @@ public class NioWebServer {
         if (bytesRead == -1){
 //            clntChan.close();
         }else if(bytesRead > 0){
+//            通过 flip() 方法将 Buffer 从写模式切换到读模式
             buf.flip();
             while(buf.hasRemaining()){
                 System.out.print((char)buf.get());
@@ -69,18 +70,17 @@ public class NioWebServer {
 
     //客户端信道已经准备好了将数据从缓冲区写入信道
     public static void handleWrite(SelectionKey key) throws IOException {
+        SocketChannel clntChan = (SocketChannel) key.channel();
         //获取与该信道关联的缓冲区，里面有之前读取到的数据
         ByteBuffer buf = (ByteBuffer) key.attachment();
-        //重置缓冲区，准备将数据写入信道
+        //通过 flip() 方法将 Buffer 从写模式切换到读模式
         buf.flip();
-        SocketChannel clntChan = (SocketChannel) key.channel();
 
         StringBuffer inString = new StringBuffer();
         while(buf.hasRemaining()){
             inString.append(buf.get());
         }
 
-        ByteBuffer resultBuf = ByteBuffer.allocate(1024);
 //        String result = HttpServer.doing(inString.toString());
         String result = SelfCallableThreadPool.startThread(inString.toString());
         System.out.println("-----result-----"+result);
@@ -91,7 +91,7 @@ public class NioWebServer {
             //如果缓冲区中的数据已经全部写入了信道，则将该信道感兴趣的操作设置为可读
             key.interestOps(SelectionKey.OP_READ);
         }
-        //为读入更多的数据腾出空间
+        //清空已经读取过的数据
         buf.compact();
     }
 
@@ -115,7 +115,7 @@ public class NioWebServer {
             ssc.register(selector, SelectionKey.OP_ACCEPT);
             while(true){
                 if(selector.select(TIMEOUT) == 0){
-                    System.out.println("==");
+                    System.out.println("wait request");
                     continue;
                 }
                 Iterator<SelectionKey> iter = selector.selectedKeys().iterator();
