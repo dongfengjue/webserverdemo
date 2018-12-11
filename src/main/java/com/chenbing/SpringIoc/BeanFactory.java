@@ -1,0 +1,5 @@
+package com.chenbing.SpringIoc;
+
+public interface BeanFactory {
+    public Object getBean(String id);
+}
