@@ -1,7 +1,7 @@
 package com.chenbing.Thread;
 
-import com.chenbing.HttpServer;
-import com.chenbing.NioWebServer;
+import com.chenbing.WebServer.HttpServer;
+import com.chenbing.WebServer.NioWebServer;
 
 import java.net.Socket;
 import java.nio.channels.ServerSocketChannel;

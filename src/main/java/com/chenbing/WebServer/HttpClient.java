@@ -1,4 +1,4 @@
-package com.chenbing;
+package com.chenbing.WebServer;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;

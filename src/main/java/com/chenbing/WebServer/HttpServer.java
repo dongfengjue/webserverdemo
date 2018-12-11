@@ -1,4 +1,4 @@
-package com.chenbing;
+package com.chenbing.WebServer;
 
 import java.io.*;
 import java.net.Socket;
