@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
-
+<!-- springmvc start -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -26,7 +26,22 @@
             <artifactId>cxf-rt-transports-http-jetty</artifactId>
             <version>3.0.4</version>
         </dependency>
+<!-- springmvc end -->
 
+<!-- mybatis start -->
+        <!-- 读取xml文件 -->
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <!-- MySQL -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.11</version>
+        </dependency>
+<!-- mybatis end -->
 
         <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
         <dependency>
