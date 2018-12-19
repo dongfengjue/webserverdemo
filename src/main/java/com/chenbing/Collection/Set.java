@@ -1,6 +1,7 @@
 package com.chenbing.Collection;
 
 import java.util.HashSet;
+import java.util.TreeMap;
 
 public class Set {
     public static void main(String args[]){
@@ -11,7 +12,10 @@ public class Set {
             hashSet.add("index"+i);
         }
 
+        TreeMap<String,String> treeMap = new TreeMap<String,String>();
+        treeMap.put("123","789");
 
+        treeMap.get("123");
 
     }
 }
