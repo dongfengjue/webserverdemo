@@ -137,7 +137,8 @@ public class ZipTest {
     public static void main(String[] args) throws Exception {
         /** 测试压缩方法1   测试可用*/
         FileOutputStream fos1 = new FileOutputStream(new File("D:\\word\\pic.zip"));
-        toZip("D:\\word\\pic", fos1,true);
+//        toZip("D:\\word\\pic", fos1,true);
+        toZip("D:/word"+"/"+"pic", fos1,true);
 
         /** 测试压缩方法2  */
         List<File> fileList = new ArrayList<>();

@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
 
 public class WordTest {
     private static final String docxReadPath = "D:\\word\\poitest.doc";
+//    private static final String docxReadPath = "C:\\Users\\chenbing\\Documents\\WeChat Files\\c17281798\\FileStorage\\File\\2019-08\\template_report.doc";
+
     private static final String docxWritePath = "D:\\word\\poiout.doc";
     /**
      * 读取文件
@@ -80,12 +82,27 @@ public class WordTest {
                 String oneparaString = runs.get(i).getText(runs.get(i).getTextPosition());
                 System.out.println(oneparaString);
                 for (Map.Entry<String,String> entry : replaceMap.entrySet()) {
+                    System.out.println("------0"+entry.getValue());
                     oneparaString = oneparaString.replace("${"+entry.getKey()+"}",entry.getValue());
                 }
-                runs.get(i).setText(oneparaString,i);
+//                runs.get(i).setText(oneparaString,i);
+                setTextWithBreak(runs,oneparaString,i);
             }
         }
         return document;
+    }
+
+    private static void setTextWithBreak(List<XWPFRun> runs,String paraString,Integer index){
+        String[] oneparaArray = paraString.split("\n");
+        //将原来数据置空
+        runs.get(index).setText("",index);
+        for (int j = 0; j < oneparaArray.length ; j++) {
+            System.out.println("----\n----"+oneparaArray[j]);
+            runs.get(index).setText(oneparaArray[j]);
+            if(j < oneparaArray.length - 1){
+                runs.get(index).addBreak();
+            }
+        }
     }
 
     /**
@@ -246,42 +263,120 @@ public class WordTest {
 
     }
 
-    public static void writeSimpleDocxFile() throws IOException {
-        XWPFDocument docxDocument = new XWPFDocument(); // 中文版的最好还是按照word给的标题名来，否则级别上可能会乱
-        //  设置格式
-        addCustomHeadingStyle(docxDocument, "标题 1", 1);
-        addCustomHeadingStyle(docxDocument, "标题 2", 2); // 标题1
+    private static  void setText(XWPFDocument docxDocument,String string,Boolean isBold){
         XWPFParagraph paragraph = docxDocument.createParagraph();
+        //  设置格式
+        addCustomHeadingStyle(docxDocument, "五号", 1);
         XWPFRun run = paragraph.createRun();
-        run.setText("标题 1${aaa}");
-        paragraph.setStyle("标题 1"); // 标题2
-        XWPFParagraph paragraph2 = docxDocument.createParagraph();
-        XWPFRun run2 = paragraph2.createRun();
-        run2.setText("标题 2${bbb}");
-        paragraph2.setStyle("标题 2"); // 正文
-        // 创建段落
-        XWPFParagraph paragraphX = docxDocument.createParagraph();
-        XWPFRun runX = paragraphX.createRun();
-        runX.setText("正文"); // word写入到文件
+        run.setText(string);
+        run.setBold(isBold);
+        //换行
+//        run.addBreak();
+        paragraph.setStyle("五号");
+    }
+
+    private static void setCell(XWPFTableCell cell){
+        //单元格属性
+        CTTcPr cellPr = cell.getCTTc().addNewTcPr();
+        cellPr.addNewVAlign().setVal(STVerticalJc.CENTER);
+        //设置宽度
+        cellPr.addNewTcW().setW(BigInteger.valueOf(3000));
+    }
+    private static void insertTable(XWPFDocument docxDocument){
+        XWPFParagraph paragraph = docxDocument.createParagraph();
 
         //插入表格
         XmlCursor cursor = paragraph.getCTP().newCursor();
         XWPFTable tb = docxDocument.insertNewTbl(cursor);
         //行
         XWPFTableRow row = tb.getRow(0);
-        row.setCantSplitRow(false);
+        row.setCantSplitRow(true);
+        row.setHeight(500);
         row.getCell(0).setText("标题");
+        setCell(row.getCell(0));
+
         row.addNewTableCell();
         row.getCell(1).setText("描述");
+        setCell(row.getCell(1));
         row.addNewTableCell();
         row.getCell(2).setText("工作建议");
+        setCell(row.getCell(2));
 
 //        XWPFTable tb2 = docxDocument.insertNewTbl(cursor);
         XWPFTableRow row2 = tb.createRow();
+        row.setHeight(500);
 //        row2.addNewTableCell();
         row2.getCell(0).setText("${title}");
+        setCell(row2.getCell(0));
         row2.getCell(1).setText("${desc}");
+        setCell(row2.getCell(1));
         row2.getCell(2).setText("${support}");
+        setCell(row2.getCell(2));
+    }
+
+//    更新时间：
+//    ${updatetime}
+//    项目简介：
+//    ${introduction}
+//    项目进展：
+//    ${progress}
+//    存在的问题：
+//    标题 描述 工作建议
+//    ${title} ${desc} ${support}
+//    工作计划：
+//    ${plan}
+    public static void writeSimpleDocxFile() throws IOException {
+        XWPFDocument docxDocument = new XWPFDocument(); // 中文版的最好还是按照word给的标题名来，否则级别上可能会乱
+        //  设置格式
+//        addCustomHeadingStyle(docxDocument, "五号", 1);
+//        addCustomHeadingStyle(docxDocument, "标题 2", 2); // 标题1
+//        XWPFParagraph paragraph = docxDocument.createParagraph();
+//        XWPFRun run = paragraph.createRun();
+        setText(docxDocument,"更新时间：",true);
+        setText(docxDocument,"${updatetime}",false);
+        setText(docxDocument,"",false);
+        setText(docxDocument,"项目简介：",true);
+        setText(docxDocument,"${introduction}",false);
+        setText(docxDocument,"",false);
+        setText(docxDocument,"项目进展：",true);
+        setText(docxDocument,"${progress}",false);
+        setText(docxDocument,"",false);
+        setText(docxDocument,"存在的问题：",true);
+        insertTable(docxDocument);
+//        insertTable3(docxDocument);
+//        setText(docxDocument,"标题 描述 工作建议");
+//        setText(docxDocument,"${title} ${desc} ${support}");
+        setText(docxDocument,"工作计划：",true);
+        setText(docxDocument,"${plan}",false);
+//        insertTable2(docxDocument);
+
+//        XWPFParagraph paragraph2 = docxDocument.createParagraph();
+//        XWPFRun run2 = paragraph2.createRun();
+//        run2.setText("标题 2${bbb}");
+//        paragraph2.setStyle("标题 2"); // 正文
+//        // 创建段落
+//        XWPFParagraph paragraphX = docxDocument.createParagraph();
+//        XWPFRun runX = paragraphX.createRun();
+//        runX.setText("正文"); // word写入到文件
+
+//        //插入表格
+//        XmlCursor cursor = paragraph.getCTP().newCursor();
+//        XWPFTable tb = docxDocument.insertNewTbl(cursor);
+//        //行
+//        XWPFTableRow row = tb.getRow(0);
+//        row.setCantSplitRow(false);
+//        row.getCell(0).setText("标题");
+//        row.addNewTableCell();
+//        row.getCell(1).setText("描述");
+//        row.addNewTableCell();
+//        row.getCell(2).setText("工作建议");
+//
+////        XWPFTable tb2 = docxDocument.insertNewTbl(cursor);
+//        XWPFTableRow row2 = tb.createRow();
+////        row2.addNewTableCell();
+//        row2.getCell(0).setText("${title}");
+//        row2.getCell(1).setText("${desc}");
+//        row2.getCell(2).setText("${support}");
 
 
         FileOutputStream fos = new FileOutputStream(docxReadPath);
@@ -295,14 +390,16 @@ public class WordTest {
 
         Map<String,String> replaceMap = new HashMap();
 
-        replaceMap.put("aaa","替换a");
-        replaceMap.put("bbb","替换b");
+        replaceMap.put("updatetime","替换\na");
+        replaceMap.put("introduction","替换\nb");
+        replaceMap.put("progress","替换\nbprogress");
+        replaceMap.put("plan","替换\nplan");
 
         Map<String,List<Map<String,String>>> replaceTableMap = new HashMap();
 
         List<Map<String,String>> valueList = new ArrayList<>();
         Map<String,String> valueMap = new HashMap<>();
-        valueMap.put("title","1111title1111");
+        valueMap.put("title","1111title\n1111");
         valueMap.put("desc","11111desc111");
         valueMap.put("support","1111support1111");
 
@@ -323,8 +420,8 @@ public class WordTest {
 //        readPar(document);
 //        //重新写入，否则表格内容读取不到。
         writeDoc(document, docxWritePath);
-//        document = read_file(docxWritePath);
-//        readTableContent(document);
+        document = read_file(docxWritePath);
+        readTableContent(document);
     }
 }
 

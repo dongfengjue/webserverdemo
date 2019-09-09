@@ -1,4 +1,4 @@
-package com.chenbing.SnowFlakeGenerator;
+package com.chenbing.uuid.SnowFlakeGenerator;
 
 public class SnowFlakeGenerator {
 
