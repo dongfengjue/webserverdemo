@@ -86,7 +86,7 @@ public class NioSocketServer extends Thread {
 
         try {
             SocketChannel channel = (SocketChannel) selectionKey.channel();
-            ByteBuffer byteBuffer = ByteBuffer.allocate(100);
+            ByteBuffer byteBuffer = ByteBuffer.allocate(200);
             int bodyLen = -1;
             if (cache) {
                 cacheBuffer.flip();

@@ -108,7 +108,8 @@ public class NioSocketClient extends Thread {
         SocketChannel channel = (SocketChannel) key.channel();
 
         for (int i = 0; i < 10; i++) {
-            String ss = i + "Server ,how are you? this is package message from NioSocketClient!";
+            String uuid = String.valueOf(Math.random());
+            String ss = i + uuid+"Server ,how are you? this is package message from NioSocketClient!"+uuid;
             int head = (ss).getBytes().length;
             ByteBuffer byteBuffer = ByteBuffer.allocate(4 + head);
             byteBuffer.put(intToBytes(head));
